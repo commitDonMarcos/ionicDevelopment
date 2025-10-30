@@ -1,0 +1,31 @@
+<ion-content class="ion-padding login-page">
+  <div class="login-container">
+    <h1>Login</h1>
+
+    <form (ngSubmit)="onLogin()">
+      <ion-input
+        type="text"
+        label="Username"
+        label-placement="floating"
+        fill="outline"
+        [(ngModel)]="username"
+        name="username"
+        required
+      ></ion-input>
+
+      <ion-input
+        label-placement="floating"
+        fill="outline"
+        type="password"
+        label="Password"
+        [(ngModel)]="password"
+        name="password"
+        required
+      ></ion-input>
+
+      <ion-button expand="block" class="login-btn" type="submit">
+        Log in
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
