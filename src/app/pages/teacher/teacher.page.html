@@ -80,9 +80,14 @@
   <h3 class="list-title">Your Tasks</h3>
 
   <ion-list *ngIf="(tasks?.length ?? 0) > 0">
-    <ion-item *ngFor="let t of tasks">
+    <ion-item *ngFor="let t of tasks" [class.closed]="t.status === 'closed'">
       <ion-label>
-        <h2>{{ t.title }}</h2>
+        <h2>
+          {{ t.title }}
+          <ion-badge *ngIf="t.status === 'closed'" color="medium" class="ml-1"
+            >Closed</ion-badge
+          >
+        </h2>
         <p>Created: {{ t.createdAt | date:'medium' }}</p>
         <p *ngIf="t.deadline">Deadline: {{ t.deadline | date:'medium' }}</p>
         <p>
@@ -90,7 +95,13 @@
         </p>
       </ion-label>
 
-      <ion-button fill="clear" (click)="goToQuestionCreator(t)" color="primary">
+      <!-- Disable Create button if task is closed -->
+      <ion-button
+        fill="clear"
+        color="primary"
+        (click)="goToQuestionCreator(t)"
+        [disabled]="t.status === 'closed'"
+      >
         Create Questions
       </ion-button>
 

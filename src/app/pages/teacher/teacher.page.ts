@@ -22,6 +22,7 @@ import {
   IonList,
   IonTitle,
   IonToolbar,
+  IonBadge,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
@@ -32,8 +33,9 @@ interface Task {
   deadline?: string | null;
   numItems: number;
   createdAt: number;
-  createdBy: number; // teacher id
-  questions?: any[]; // array of question objects
+  createdBy: number;
+  questions?: any[];
+  status?: 'open' | 'closed'; // 👈 added
 }
 
 interface User {
@@ -69,6 +71,7 @@ interface User {
     IonItem,
     IonList,
     IonIcon,
+    IonBadge
   ],
 })
 export class TeacherPage {
@@ -88,10 +91,10 @@ export class TeacherPage {
   async ionViewWillEnter() {
     await this.loadTeacher();
     await this.loadTasks();
+    await this.checkTaskDeadlines(); // 👈 auto-close check added here
   }
 
   async loadTeacher() {
-    // ensure storage is ready before accessing
     await this.storage.create();
     this.teacher = (await this.storage.get('currentUser')) || null;
   }
@@ -99,7 +102,6 @@ export class TeacherPage {
   async loadTasks() {
     await this.storage.create();
     const allTasks: Task[] = (await this.storage.get('tasks')) || [];
-    // filter tasks created by this teacher and sort newest first
     const teacherId = this.teacher?.id;
     this.tasks = (allTasks.filter((t) => t.createdBy === teacherId) || []).sort(
       (a, b) => b.createdAt - a.createdAt
@@ -107,7 +109,6 @@ export class TeacherPage {
   }
 
   async createTask() {
-    // validate
     if (
       !this.taskForm.title.trim() ||
       !this.taskForm.numItems ||
@@ -131,6 +132,7 @@ export class TeacherPage {
       createdAt: Date.now(),
       createdBy: this.teacher!.id,
       questions: [],
+      status: 'open', // 👈 initialize as open
     };
 
     allTasks.push(newTask);
@@ -160,13 +162,11 @@ export class TeacherPage {
     const reader = new FileReader();
     reader.onload = async () => {
       const base64 = reader.result as string;
-      // update currentUser and users list
       const user = (await this.storage.get('currentUser')) || null;
       if (!user) return;
       user.photo = base64;
       await this.storage.set('currentUser', user);
 
-      // update in users array too
       const users = (await this.storage.get('users')) || [];
       const idx = users.findIndex((u: any) => u.id === user.id);
       if (idx !== -1) {
@@ -186,6 +186,10 @@ export class TeacherPage {
   }
 
   goToQuestionCreator(task: Task) {
+    if (task.status === 'closed') {
+      this.showToast('This task is closed. You can’t add questions.', 'medium');
+      return;
+    }
     this.router.navigate(['/question-creator', task.id]);
   }
 
@@ -212,10 +216,40 @@ export class TeacherPage {
     const updated = allTasks.filter((t) => t.id !== task.id);
     await this.storage.set('tasks', updated);
     await this.loadTasks();
+    this.showToast('Task deleted', 'medium');
+  }
+
+  // 👇 NEW FEATURE: automatically close expired tasks
+  async checkTaskDeadlines() {
+    const allTasks: Task[] = (await this.storage.get('tasks')) || [];
+    const now = new Date().getTime();
+    let changed = false;
+
+    for (const t of allTasks) {
+      if (t.deadline && t.status !== 'closed') {
+        const deadlineTime = new Date(t.deadline).getTime();
+        if (now > deadlineTime) {
+          t.status = 'closed';
+          changed = true;
+          this.showToast(
+            `Task "${t.title}" has been closed (deadline reached).`,
+            'warning'
+          );
+        }
+      }
+    }
+
+    if (changed) {
+      await this.storage.set('tasks', allTasks);
+      await this.loadTasks();
+    }
+  }
+
+  async showToast(msg: string, color: string = 'primary') {
     const toast = await this.toastCtrl.create({
-      message: 'Task deleted',
-      duration: 1500,
-      color: 'medium',
+      message: msg,
+      duration: 2000,
+      color,
     });
     toast.present();
   }
