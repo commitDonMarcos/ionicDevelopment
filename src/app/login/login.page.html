@@ -2,6 +2,11 @@
   <div class="login-container">
     <h1>Login</h1>
 
+    <!-- error message -->
+    <ion-note *ngIf="errorMessage" class="error-msg"
+      >{{ errorMessage }}</ion-note
+    >
+
     <form (ngSubmit)="onLogin()">
       <ion-input
         type="text"
