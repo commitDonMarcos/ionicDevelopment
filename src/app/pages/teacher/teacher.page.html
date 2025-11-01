@@ -1,13 +1,104 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>teacher</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Teacher Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Logout</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">teacher</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding teacher-page">
+  <!-- Profile card -->
+  <div class="profile-card">
+    <ion-avatar class="profile-avatar">
+      <img [src]="teacher?.photo || 'assets/profile.png'" alt="profile" />
+    </ion-avatar>
+
+    <div class="profile-info">
+      <h2>{{ teacher?.username }}</h2>
+      <p>{{ teacher?.subject || 'No subject' }}</p>
+
+      <div class="profile-actions">
+        <input
+          id="photoInput"
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="changePhoto($event)"
+        />
+        <ion-button size="small" (click)="triggerPhotoPicker()"
+          >Change Photo</ion-button
+        >
+      </div>
+    </div>
+  </div>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Add Task</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form (ngSubmit)="createTask()">
+        <ion-item>
+          <ion-label position="floating">Task Title</ion-label>
+          <ion-input
+            [(ngModel)]="taskForm.title"
+            name="title"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Deadline (date & time)</ion-label>
+          <ion-datetime
+            display-format="MMM DD, YYYY HH:mm"
+            picker-format="MMM DD YYYY HH:mm"
+            [(ngModel)]="taskForm.deadline"
+            name="deadline"
+          ></ion-datetime>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Number of Items</ion-label>
+          <ion-input
+            type="number"
+            min="1"
+            [(ngModel)]="taskForm.numItems"
+            name="numItems"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" type="submit" color="success"
+          >Save Task</ion-button
+        >
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <h3 class="list-title">Your Tasks</h3>
+
+  <ion-list *ngIf="(tasks?.length ?? 0) > 0">
+    <ion-item *ngFor="let t of tasks">
+      <ion-label>
+        <h2>{{ t.title }}</h2>
+        <p>Created: {{ t.createdAt | date:'medium' }}</p>
+        <p *ngIf="t.deadline">Deadline: {{ t.deadline | date:'medium' }}</p>
+        <p>
+          Items: {{ t.numItems }} · Questions: {{ t.questions?.length || 0 }}
+        </p>
+      </ion-label>
+
+      <ion-button fill="clear" (click)="goToQuestionCreator(t)" color="primary">
+        Create Questions
+      </ion-button>
+
+      <ion-button fill="clear" color="danger" (click)="confirmDeleteTask(t)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="tasks?.length === 0" class="empty">No tasks yet.</div>
 </ion-content>

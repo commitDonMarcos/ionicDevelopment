@@ -1,0 +1,48 @@
+.teacher-page {
+  --background: #ffffff;
+
+  .profile-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .profile-avatar img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .profile-info h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .profile-info p {
+    margin: 4px 0 8px 0;
+    color: #666;
+  }
+
+  .profile-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  ion-card {
+    margin-bottom: 18px;
+  }
+
+  .list-title {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .empty {
+    text-align: center;
+    color: #888;
+    margin-top: 16px;
+  }
+}

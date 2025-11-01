@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Create Questions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="!task">
+    <p>Task not found.</p>
+  </div>
+
+  <div *ngIf="task">
+    <h2>{{ task.title }}</h2>
+    <p>Items to create: {{ task.numItems }}</p>
+    <p>Created: {{ task.createdAt | date:'medium' }}</p>
+
+    <form (ngSubmit)="saveQuestions()">
+      <div
+        *ngFor="let q of questions; let i = index; trackBy: trackByQuestion"
+        class="question-block"
+      >
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Question {{ i + 1 }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <ion-item>
+              <ion-label position="floating">Question text</ion-label>
+              <ion-textarea
+                [(ngModel)]="q.text"
+                [ngModelOptions]="{standalone: true}"
+                name="text{{i}}"
+                required
+              ></ion-textarea>
+            </ion-item>
+
+            <div class="choices">
+              <ion-radio-group
+                [(ngModel)]="q.correctIndex"
+                [ngModelOptions]="{standalone: true}"
+                name="correct{{i}}"
+              >
+                <ion-item
+                  *ngFor="let c of q.choices; let j = index; trackBy: trackByChoice"
+                >
+                  <ion-label position="fixed">{{ choiceLabel(j) }}</ion-label>
+                  <ion-input
+                    [(ngModel)]="q.choices[j]"
+                    [ngModelOptions]="{standalone: true}"
+                    name="choice{{i}}_{{j}}"
+                    required
+                  ></ion-input>
+                  <ion-radio slot="end" [value]="j"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <ion-button expand="block" type="submit" color="success"
+        >Save Questions</ion-button
+      >
+    </form>
+  </div>
+</ion-content>
