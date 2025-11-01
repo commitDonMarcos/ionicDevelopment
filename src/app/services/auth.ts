@@ -7,6 +7,7 @@ export interface User {
   username: string;
   password: string;
   role: 'admin' | 'teacher' | 'student';
+  subject?: string;
   createdBy?: number;
 }
 

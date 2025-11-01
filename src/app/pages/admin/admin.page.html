@@ -1,13 +1,70 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>admin</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Admin Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Logout</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">admin</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding admin-page">
+  <h2>Manage Teachers</h2>
+
+  <form (ngSubmit)="addTeacher()">
+    <ion-item>
+      <ion-label position="floating">Username</ion-label>
+      <ion-input
+        [(ngModel)]="newTeacher.username"
+        name="username"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input
+        [(ngModel)]="newTeacher.password"
+        name="password"
+        type="password"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Subject</ion-label>
+      <ion-input
+        [(ngModel)]="newTeacher.subject"
+        name="subject"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" color="success">
+      Add Teacher
+    </ion-button>
+  </form>
+
+  <ion-list *ngIf="teachers.length > 0">
+    <ion-list-header>
+      <ion-label>Teachers List</ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let teacher of teachers">
+      <ion-label>
+        <h2>{{ teacher.username }}</h2>
+        <p>Subject: {{ teacher.subject || 'N/A' }}</p>
+      </ion-label>
+
+      <ion-button
+        color="danger"
+        fill="clear"
+        slot="end"
+        (click)="confirmDeleteTeacher(teacher)"
+      >
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="teachers.length === 0" class="empty">No teachers yet.</div>
 </ion-content>
