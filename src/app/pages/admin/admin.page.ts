@@ -2,9 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, User } from 'src/app/services/auth';
 import { Storage } from '@ionic/storage-angular';
 import { addIcons } from 'ionicons';
-import { trashOutline } from 'ionicons/icons';
-import { ToastController, AlertController } from '@ionic/angular';
+import { trashOutline, createOutline } from 'ionicons/icons';
 import {
+  ToastController,
+  AlertController,
+  ActionSheetController,
+} from '@ionic/angular';
+import {
+  IonAvatar,
   IonButton,
   IonButtons,
   IonContent,
@@ -15,6 +20,7 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonSearchbar,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -25,6 +31,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-admin',
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
+  standalone: true,
   imports: [
     IonHeader,
     IonContent,
@@ -40,13 +47,16 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     IonIcon,
+    IonAvatar,
+    IonSearchbar,
   ],
-  standalone: true,
 })
 export class AdminPage implements OnInit {
   newTeacher = { username: '', password: '', subject: '' };
   teachers: User[] = [];
   adminUser: User | null = null;
+  filteredTeachers: any[] = [];
+  searchTerm: string = '';
 
   constructor(
     private authService: AuthService,
@@ -54,21 +64,40 @@ export class AdminPage implements OnInit {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController
   ) {
-    addIcons({ 'trash-outline': trashOutline });
+    addIcons({
+      'trash-outline': trashOutline,
+      'create-outline': createOutline,
+    });
   }
 
   async ngOnInit() {
     await this.loadTeachers();
-    this.adminUser = await this.authService.getCurrentUser();
   }
-
+  async ionViewWillEnter() {
+    await this.loadTeachers();
+  }
+  // filter teachers by username or subject
   async loadTeachers() {
     const users = (await this.storage.get('users')) || [];
     this.teachers = users.filter((u: User) => u.role === 'teacher');
+    this.filteredTeachers = [...this.teachers];
+  }
+  filterTeachers() {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    if (!term) {
+      this.filteredTeachers = [...this.teachers];
+      return;
+    }
+
+    this.filteredTeachers = this.teachers.filter(
+      (teacher: any) =>
+        teacher.username.toLowerCase().includes(term) ||
+        (teacher.subject && teacher.subject.toLowerCase().includes(term))
+    );
   }
 
   async addTeacher() {
-    // ✅ Validate all fields
     if (
       !this.newTeacher.username.trim() ||
       !this.newTeacher.password.trim() ||
@@ -76,6 +105,7 @@ export class AdminPage implements OnInit {
     ) {
       const toast = await this.toastCtrl.create({
         message: 'All fields are required',
+        position: 'top',
         duration: 2000,
         color: 'warning',
       });
@@ -91,6 +121,7 @@ export class AdminPage implements OnInit {
     if (exists) {
       const toast = await this.toastCtrl.create({
         message: 'Username already exists',
+        position: 'top',
         duration: 2000,
         color: 'danger',
       });
@@ -106,6 +137,7 @@ export class AdminPage implements OnInit {
       role: 'teacher',
       createdBy: this.adminUser?.id,
       subject: this.newTeacher.subject,
+      photo: '', // no photo initially
     };
 
     users.push(teacher);
@@ -116,34 +148,37 @@ export class AdminPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message: 'Teacher added successfully',
       duration: 2000,
+      position: 'top',
       color: 'success',
     });
     toast.present();
   }
 
-  // Updated delete function using AlertController
   async confirmDeleteTeacher(teacher: User) {
     const alert = await this.alertCtrl.create({
-      header: 'Confirm Delete',
-      message: `Are you sure you want to delete ${teacher.username}?`,
+      header: '⚠️ Confirm Delete',
+      message: `Are you sure you want to delete ${teacher.username.toLocaleUpperCase()}?`,
+      mode: 'ios',
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
+          cssClass: 'alert-cancel',
         },
         {
           text: 'Delete',
           role: 'destructive',
+          cssClass: 'alert-delete',
           handler: async () => {
             const users = (await this.storage.get('users')) || [];
             const updatedUsers = users.filter((u: User) => u.id !== teacher.id);
-
             await this.storage.set('users', updatedUsers);
             await this.loadTeachers();
 
             const toast = await this.toastCtrl.create({
               message: 'Teacher deleted successfully',
               duration: 2000,
+              position: 'top',
               color: 'medium',
             });
             toast.present();
@@ -153,6 +188,128 @@ export class AdminPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  //  Edit teacher info + upload photo
+  async editTeacher(teacher: User) {
+    const alert = await this.alertCtrl.create({
+      header: 'Edit Teacher',
+      inputs: [
+        {
+          name: 'username',
+          type: 'text',
+          placeholder: 'Username',
+          value: teacher.username,
+        },
+        {
+          name: 'password',
+          type: 'password',
+          placeholder: 'Password',
+          value: teacher.password,
+        },
+        {
+          name: 'subject',
+          type: 'text',
+          placeholder: 'Subject',
+          value: teacher.subject,
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Change Photo',
+          handler: async () => {
+            await this.pickPhoto(teacher);
+            return false; // prevent alert from closing
+          },
+        },
+        {
+          text: 'Save',
+          handler: async (data) => {
+            if (!data.username || !data.password || !data.subject) {
+              const toast = await this.toastCtrl.create({
+                message: 'All fields are required',
+                duration: 2000,
+                position: 'top',
+                color: 'warning',
+              });
+              toast.present();
+              return false;
+            }
+
+            const users = (await this.storage.get('users')) || [];
+            const index = users.findIndex((u: User) => u.id === teacher.id);
+
+            if (index !== -1) {
+              users[index].username = data.username;
+              users[index].password = data.password;
+              users[index].subject = data.subject;
+              await this.storage.set('users', users);
+              await this.loadTeachers();
+
+              const toast = await this.toastCtrl.create({
+                message: 'Teacher updated successfully',
+                duration: 2000,
+                position: 'top',
+                color: 'success',
+              });
+              toast.present();
+              return true;
+            } else {
+              const toast = await this.toastCtrl.create({
+                message: 'Teacher not found',
+                duration: 2000,
+                position: 'top',
+                color: 'danger',
+              });
+              toast.present();
+              return false;
+            }
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  //  Choose and save teacher photo
+  async pickPhoto(teacher: User) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+
+    input.onchange = async (event: any) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        const users = (await this.storage.get('users')) || [];
+        const index = users.findIndex((u: User) => u.id === teacher.id);
+
+        if (index !== -1) {
+          users[index].photo = base64;
+          await this.storage.set('users', users);
+          await this.loadTeachers();
+
+          const toast = await this.toastCtrl.create({
+            message: 'Photo updated successfully',
+            duration: 2000,
+            position: 'top',
+            color: 'success',
+          });
+          toast.present();
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    input.click();
   }
 
   async logout() {

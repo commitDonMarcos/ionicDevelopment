@@ -9,6 +9,7 @@ export interface User {
   role: 'admin' | 'teacher' | 'student';
   subject?: string;
   createdBy?: number;
+  photo?: string;
 }
 
 @Injectable({

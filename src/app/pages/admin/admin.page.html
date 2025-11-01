@@ -44,17 +44,38 @@
     </ion-button>
   </form>
 
-  <ion-list *ngIf="teachers.length > 0">
+  <!--  Search Bar (always visible so it doesn't disappear when no results) -->
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    placeholder="Search teachers..."
+    (ionInput)="filterTeachers()"
+    debounce="200"
+  ></ion-searchbar>
+
+  <ion-list *ngIf="filteredTeachers.length > 0">
     <ion-list-header>
       <ion-label>Teachers List</ion-label>
     </ion-list-header>
+    <!-- teachers list -->
+    <ion-item *ngFor="let teacher of filteredTeachers">
+      <ion-avatar slot="start">
+        <img
+          [src]="teacher.photo || 'assets/profile.png'"
+          alt="Teacher photo"
+        />
+      </ion-avatar>
 
-    <ion-item *ngFor="let teacher of teachers">
       <ion-label>
         <h2>{{ teacher.username }}</h2>
         <p>Subject: {{ teacher.subject || 'N/A' }}</p>
       </ion-label>
 
+      <!-- Edit button -->
+      <ion-button fill="clear" color="primary" (click)="editTeacher(teacher)">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+
+      <!-- Delete button -->
       <ion-button
         color="danger"
         fill="clear"
@@ -67,4 +88,10 @@
   </ion-list>
 
   <div *ngIf="teachers.length === 0" class="empty">No teachers yet.</div>
+  <div
+    *ngIf="teachers.length > 0 && filteredTeachers.length === 0"
+    class="empty"
+  >
+    No teachers match your search.
+  </div>
 </ion-content>
