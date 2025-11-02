@@ -2,35 +2,90 @@
   <ion-toolbar color="primary">
     <ion-title>Student Dashboard</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="viewMyResults()">My Results</ion-button>
-      <ion-button (click)="logout()">Logout</ion-button>
+      <ion-button (click)="changePassword()">CHANGE PASSWORD</ion-button>
+      <ion-button (click)="logout()">LOGOUT</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h2 *ngIf="student">Hello, {{ student.studentName || student.username }}</h2>
+  <h2>Welcome, {{ student?.studentName || student?.username }}</h2>
 
-  <ion-list *ngIf="tasks.length > 0">
-    <ion-item *ngFor="let t of tasks">
-      <ion-label>
-        <h2>{{ t.title }}</h2>
-        <p *ngIf="t.deadline">Deadline: {{ t.deadline | date:'medium' }}</p>
+  <!-- 🔹 Active Tasks -->
+  <ion-item-divider color="light">
+    <ion-label><strong>Active Tasks</strong></ion-label>
+  </ion-item-divider>
+
+  <ion-card *ngFor="let task of tasks">
+    <ion-card-header>
+      <ion-card-title>{{ task.title }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>Deadline: {{ task.deadline | date: 'medium' }}</p>
+      <p>
+        Items: {{ task.items?.length || 1 }} · Questions: {{
+        task.questions?.length || 1 }}
+      </p>
+
+      <div class="ion-margin-top">
+        <ion-button color="success" fill="clear" (click)="takeTask(task)">
+          TAKE TASK
+        </ion-button>
+        <ion-button color="tertiary" fill="clear" (click)="viewAnalysis(task)">
+          VIEW ANALYSIS
+        </ion-button>
+      </div>
+
+      <hr />
+
+      <div *ngIf="getResultForTask(task.id) as result; else notTaken">
         <p>
-          Items: {{ t.numItems }} · Questions: {{ t.questions?.length || 0 }}
+          <strong>Your Score:</strong> {{ result.score }}/{{ result.total }}
         </p>
-      </ion-label>
+        <p>
+          <strong>Status:</strong>
+          {{ result.passed ? '✅ Passed' : '❌ Failed' }}
+        </p>
+        <p><strong>Date Taken:</strong> {{ result.date | date: 'medium' }}</p>
+      </div>
 
-      <ion-button fill="clear" color="success" (click)="takeTask(t)"
-        >Take Task</ion-button
-      >
-      <ion-button fill="clear" color="tertiary" (click)="viewAnalysis(t)"
-        >View Analysis</ion-button
-      >
-    </ion-item>
-  </ion-list>
+      <ng-template #notTaken>
+        <p><em>No result yet for this task.</em></p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
 
-  <div *ngIf="tasks.length === 0" class="ion-text-center ion-padding">
-    No open tasks available.
-  </div>
+  <!-- 🔹 Task History -->
+  <ion-item-divider color="light" *ngIf="pastTasks.length > 0">
+    <ion-label><strong>Task History</strong></ion-label>
+  </ion-item-divider>
+
+  <ion-card *ngFor="let past of pastTasks">
+    <ion-card-header>
+      <ion-card-title>{{ past.title }}</ion-card-title>
+      <ion-note color="danger">
+        Expired: {{ past.deadline | date: 'medium' }}
+      </ion-note>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p><strong>Status:</strong> Closed</p>
+
+      <div *ngIf="getResultForTask(past.id) as result; else noHistoryResult">
+        <p>
+          <strong>Your Score:</strong> {{ result.score }}/{{ result.total }}
+        </p>
+        <p>
+          <strong>Result:</strong>
+          {{ result.passed ? '✅ Passed' : '❌ Failed' }}
+        </p>
+        <p><strong>Date Taken:</strong> {{ result.date | date: 'medium' }}</p>
+      </div>
+
+      <ng-template #noHistoryResult>
+        <p><em>You didn’t take this task.</em></p>
+      </ng-template>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

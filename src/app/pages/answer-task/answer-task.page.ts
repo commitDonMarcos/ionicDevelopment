@@ -108,7 +108,7 @@ export class AnswerTaskPage {
       return;
     }
 
-    // validate all answered
+    // Validate all answered
     for (let i = 0; i < this.questions.length; i++) {
       if (this.answers[i] === -1) {
         const to = await this.toastCtrl.create({
@@ -121,7 +121,7 @@ export class AnswerTaskPage {
       }
     }
 
-    // calculate score and build answers array
+    // Calculate score
     let score = 0;
     const answersPayload: any[] = [];
     for (let i = 0; i < this.questions.length; i++) {
@@ -137,36 +137,48 @@ export class AnswerTaskPage {
       });
     }
 
+    const total = this.questions.length;
+    const passed = score >= total / 2;
+
     const submission = {
       studentId: this.student?.id,
       studentName: this.student?.studentName || this.student?.username,
-      answers: answersPayload,
+      taskId: this.taskId,
       score,
-      submittedAt: Date.now(),
+      total,
+      passed,
+      answers: answersPayload,
+      date: Date.now(),
     };
 
-    // save to results keyed by task.id
+    // 🔹 1. Save to teacher view results (by task)
     const allResults = (await this.storage.get('results')) || {};
     const taskKey = this.taskId;
     if (!taskKey) {
       console.error('taskId is null! Cannot save results.');
       return;
     }
-
     const arr = allResults[taskKey] || [];
     arr.push(submission);
     allResults[taskKey] = arr;
     await this.storage.set('results', allResults);
 
-    // show score to student
+    // 🔹 2. Save to student-specific results
+    const studentResults = (await this.storage.get('studentResults')) || [];
+    studentResults.push(submission);
+    await this.storage.set('studentResults', studentResults);
+
+    // 🔹 Show result to student
     const alert = await this.alertCtrl.create({
       header: 'Submitted',
-      message: `You scored ${score} / ${this.questions.length}`,
+      message: `You scored ${score} / ${total} (${
+        passed ? '✅ Passed' : '❌ Failed'
+      })`,
       buttons: ['OK'],
     });
     await alert.present();
 
-    // navigate back to student dashboard
+    // Navigate back
     this.navCtrl.navigateRoot('/student');
   }
 }
