@@ -1,0 +1,25 @@
+<ion-content class="ion-padding">
+  <ion-card *ngFor="let q of questions; let i = index">
+    <ion-card-header>
+      <ion-card-title>Question {{ i + 1 }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>{{ q.questionText }}</p>
+
+      <ion-radio-group
+        [(ngModel)]="answers[i]"
+        [ngModelOptions]="{standalone: true}"
+      >
+        <ion-item *ngFor="let choice of q.choices; let j = index">
+          <ion-label>{{ choice }}</ion-label>
+          <ion-radio slot="end" [value]="j" name="q{{i}}"> </ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" (click)="submit()">
+    Submit
+  </ion-button>
+</ion-content>

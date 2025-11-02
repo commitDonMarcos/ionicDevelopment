@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="back()">Back</ion-button>
+    </ion-buttons>
+    <ion-title>Task Analysis</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>{{ task?.title }}</h2>
+  <p>Total students attempted: {{ totalStudents }}</p>
+
+  <ion-card *ngIf="task">
+    <ion-card-header>
+      <ion-card-title>Per-item Analysis</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table style="width: 100%; border-collapse: collapse">
+        <thead>
+          <tr>
+            <th
+              style="
+                text-align: left;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+              "
+            >
+              Question
+            </th>
+            <th
+              style="
+                text-align: right;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+              "
+            >
+              Correct Count
+            </th>
+            <th
+              style="
+                text-align: right;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+              "
+            >
+              % Correct
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let _ of perQuestionCounts; let i = index">
+            <td style="padding: 8px; border-bottom: 1px solid #f0f0f0">
+              Q{{ i + 1 }}
+            </td>
+            <td
+              style="
+                padding: 8px;
+                border-bottom: 1px solid #f0f0f0;
+                text-align: right;
+              "
+            >
+              {{ perQuestionCounts[i] || 0 }}
+            </td>
+            <td
+              style="
+                padding: 8px;
+                border-bottom: 1px solid #f0f0f0;
+                text-align: right;
+              "
+            >
+              {{ percentCorrect(i) }}%
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

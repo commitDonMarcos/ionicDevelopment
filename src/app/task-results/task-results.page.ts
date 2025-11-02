@@ -2,7 +2,8 @@ import { Component, Input, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Chart, registerables } from 'chart.js';
-import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { FormsModule } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 Chart.register(...registerables);
 
@@ -11,7 +12,7 @@ Chart.register(...registerables);
   templateUrl: './task-results.page.html',
   styleUrls: ['./task-results.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, IonHeader, IonTitle, IonButton, IonButtons, IonToolbar, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent],
+  imports: [IonicModule, CommonModule, FormsModule],
 })
 export class TaskResultsPage implements AfterViewInit {
   @Input() task: any;
@@ -23,10 +24,14 @@ export class TaskResultsPage implements AfterViewInit {
   percentages: number[] = [];
   totalStudents = 0;
 
-  constructor(private modalCtrl: ModalController) {}
+  constructor(
+    private modalCtrl: ModalController,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngAfterViewInit() {
     this.calculateStats();
+    this.cdr.detectChanges(); // force Angular to detect changes after properties are updated
     this.renderChart();
   }
 
