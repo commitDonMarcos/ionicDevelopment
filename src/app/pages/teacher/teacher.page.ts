@@ -1,29 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ModalController, IonicModule } from '@ionic/angular';
+import { TaskResultsPage } from '../../task-results/task-results.page';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 import { ToastController, AlertController } from '@ionic/angular';
-import {
-  IonAvatar,
-  IonButton,
-  IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonContent,
-  IonHeader,
-  IonInput,
-  IonDatetime,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonTitle,
-  IonToolbar,
-  IonBadge,
-} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
 
@@ -35,7 +19,7 @@ interface Task {
   createdAt: number;
   createdBy: number;
   questions?: any[];
-  status?: 'open' | 'closed'; // 👈 added
+  status?: 'open' | 'closed'; //  added
 }
 
 interface User {
@@ -52,26 +36,9 @@ interface User {
   styleUrls: ['./teacher.page.scss'],
   standalone: true,
   imports: [
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
+    IonicModule, //  Handles all Ionic elements
     CommonModule,
     FormsModule,
-    IonButton,
-    IonButtons,
-    IonAvatar,
-    IonInput,
-    IonDatetime,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonLabel,
-    IonItem,
-    IonList,
-    IonIcon,
-    IonBadge
   ],
 })
 export class TeacherPage {
@@ -83,7 +50,8 @@ export class TeacherPage {
     private storage: Storage,
     private router: Router,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private modalCtrl: ModalController
   ) {
     addIcons({ 'trash-outline': trashOutline });
   }
@@ -91,7 +59,7 @@ export class TeacherPage {
   async ionViewWillEnter() {
     await this.loadTeacher();
     await this.loadTasks();
-    await this.checkTaskDeadlines(); // 👈 auto-close check added here
+    await this.checkTaskDeadlines(); //  auto-close check added here
   }
 
   async loadTeacher() {
@@ -256,5 +224,57 @@ export class TeacherPage {
 
   logout() {
     this.router.navigateByUrl('/login', { replaceUrl: true });
+  }
+
+  async viewTaskResults(task: Task) {
+    const allResults = (await this.storage.get('results')) || {};
+    const taskResults = allResults[task.id] || [];
+
+    if (taskResults.length === 0) {
+      this.showToast('No student results yet for this task.', 'medium');
+      return;
+    }
+
+    const modal = await this.modalCtrl.create({
+      component: TaskResultsPage,
+      componentProps: {
+        task,
+        results: taskResults,
+      },
+    });
+
+    await modal.present();
+  }
+
+  renderChart(canvasId: string, percentages: number[]) {
+    const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: percentages.map((_, i) => `Q${i + 1}`),
+        datasets: [
+          {
+            label: '% Correct',
+            data: percentages,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: 'Percentage (%)' },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+        },
+      },
+    });
   }
 }

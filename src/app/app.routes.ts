@@ -40,4 +40,8 @@ export const routes: Routes = [
         (m) => m.QuestionCreatorPage
       ),
   },
+  {
+    path: 'task-results',
+    loadComponent: () => import('./task-results/task-results.page').then( m => m.TaskResultsPage)
+  },
 ];

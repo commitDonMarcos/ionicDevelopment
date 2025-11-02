@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Task Analysis</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>{{ task?.title }}</h2>
+  <p><strong>Total Students:</strong> {{ totalStudents }}</p>
+  <p>
+    <strong>Highest Scorer:</strong>
+    {{ highestStudent || 'N/A' }} ({{ highestScore }}/{{ task?.numItems }})
+  </p>
+  <p>
+    <strong>Passed:</strong> {{ (totalStudents > 0 ? (passedCount /
+    totalStudents) * 100 : 0) | number:'1.0-0' }}%
+  </p>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Question Performance</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="resultsChart" height="220"></canvas>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

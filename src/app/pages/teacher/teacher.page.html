@@ -81,6 +81,14 @@
 
   <ion-list *ngIf="(tasks?.length ?? 0) > 0">
     <ion-item *ngFor="let t of tasks" [class.closed]="t.status === 'closed'">
+      <ion-button
+        fill="clear"
+        color="tertiary"
+        (click)="viewTaskResults(t)"
+        [disabled]="t.status !== 'closed'"
+      >
+        View Results
+      </ion-button>
       <ion-label>
         <h2>
           {{ t.title }}
