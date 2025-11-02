@@ -45,18 +45,25 @@ export class AuthService {
   }
 
   async login(username: string, password: string): Promise<User | null> {
-    const users = await this._storage?.get('users');
-    const found = users?.find(
-      (u: User) => u.username === username && u.password === password
+    const users = (await this._storage?.get('users')) || [];
+    const students = (await this._storage?.get('students')) || [];
+
+    // Combine both lists (admin, teacher, student)
+    const allAccounts = [...users, ...students];
+
+    const found = allAccounts.find(
+      (u: any) => u.username === username && u.password === password
     );
 
     if (found) {
-      await this._storage?.set('currentUser', found);
-      this.redirectBasedOnRole(found.role);
+      // Default to 'student' if no role
+      const role = found.role || 'student';
+      await this._storage?.set('currentUser', { ...found, role });
+      this.redirectBasedOnRole(role);
       return found;
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   redirectBasedOnRole(role: string) {
