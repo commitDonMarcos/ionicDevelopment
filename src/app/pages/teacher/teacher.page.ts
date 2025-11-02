@@ -10,6 +10,7 @@ Chart.register(...registerables);
 import { ToastController, AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
+import { TeacherStudentsPage } from '../teacher-students/teacher-students.page';
 
 interface Task {
   id: string;
@@ -19,7 +20,7 @@ interface Task {
   createdAt: number;
   createdBy: number;
   questions?: any[];
-  status?: 'open' | 'closed'; //  added
+  status?: 'open' | 'closed';
 }
 
 interface User {
@@ -54,6 +55,12 @@ export class TeacherPage {
     private modalCtrl: ModalController
   ) {
     addIcons({ 'trash-outline': trashOutline });
+  }
+  async openStudentManager() {
+    const modal = await this.modalCtrl.create({
+      component: TeacherStudentsPage,
+    });
+    await modal.present();
   }
 
   async ionViewWillEnter() {

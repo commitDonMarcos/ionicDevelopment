@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>My Students</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Add New Student</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Full Name</ion-label>
+        <ion-input [(ngModel)]="newStudent.name"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Username</ion-label>
+        <ion-input [(ngModel)]="newStudent.username"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="newStudent.password"
+        ></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" color="success" (click)="addStudent()"
+        >Add Student</ion-button
+      >
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-item *ngFor="let s of students">
+      <ion-label>
+        <h2>{{ s.studentName }}</h2>
+        <p>Username: {{ s.username }}</p>
+      </ion-label>
+      <ion-button color="danger" fill="clear" (click)="deleteStudent(s)"
+        >Delete</ion-button
+      >
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="students.length === 0" class="empty">No students yet.</div>
+</ion-content>

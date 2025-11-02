@@ -44,4 +44,8 @@ export const routes: Routes = [
     path: 'task-results',
     loadComponent: () => import('./task-results/task-results.page').then( m => m.TaskResultsPage)
   },
+  {
+    path: 'teacher-students',
+    loadComponent: () => import('./pages/teacher-students/teacher-students.page').then( m => m.TeacherStudentsPage)
+  },
 ];
