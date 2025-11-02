@@ -85,4 +85,18 @@ export const routes: Routes = [
         (m) => m.StudentAnalysisPage
       ),
   },
+  {
+    path: 'change-password',
+    loadComponent: () =>
+      import('./pages/change-password/change-password.page').then(
+        (m) => m.ChangePasswordPage
+      ),
+  },
+  {
+    path: 'change-password',
+    loadComponent: () =>
+      import('./pages/change-password/change-password.page').then(
+        (m) => m.ChangePasswordPage
+      ),
+  },
 ];

@@ -25,6 +25,12 @@ export class StudentPage {
     private alertCtrl: AlertController
   ) {}
 
+  async debugStorage() {
+    await this.storage.create();
+    console.log('Users:', await this.storage.get('users'));
+    console.log('Current User:', await this.storage.get('currentUser'));
+  }
+
   async changePassword() {
     const alert = await this.alertCtrl.create({
       header: 'Change Password',
@@ -109,6 +115,11 @@ export class StudentPage {
     this.student = (await this.storage.get('currentUser')) || null;
     await this.loadTasks();
     await this.loadResults();
+    this.debugStorage();
+  }
+
+  goToChangePassword() {
+    this.router.navigateByUrl('/change-password');
   }
 
   async loadTasks() {
