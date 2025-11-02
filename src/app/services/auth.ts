@@ -33,8 +33,8 @@ export class AuthService {
     if (!savedUsers) {
       const defaultAdmin: User = {
         id: 1,
-        username: 'admin',
-        password: 'admin',
+        username: 'User',
+        password: 'Admin',
         role: 'admin',
       };
       this.users = [defaultAdmin];
