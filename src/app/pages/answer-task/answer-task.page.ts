@@ -43,7 +43,8 @@ export class AnswerTaskPage {
 
   async loadTask() {
     const tasks = (await this.storage.get('tasks')) || [];
-    this.task = tasks.find((t: any) => t.id === this.taskId) || null;
+    this.task = tasks.find((t: any) => t.id == this.taskId) || null;
+
     if (!this.task) {
       const a = await this.alertCtrl.create({
         header: 'Not found',
@@ -54,9 +55,16 @@ export class AnswerTaskPage {
       this.navCtrl.back();
       return;
     }
-    // ensure questions array exists
-    this.questions = this.task.questions || [];
-    // init answers with -1
+
+    // Normalize question data to ensure compatibility
+    this.questions = (this.task.questions || []).map((q: any) => ({
+      text: q.text || q.question || 'Untitled Question',
+      choices: q.choices || [],
+      correctIndex:
+        typeof q.correctIndex === 'number' ? q.correctIndex : q.correct,
+    }));
+
+    // Initialize empty answers
     this.answers = this.questions.map(() => -1);
   }
 

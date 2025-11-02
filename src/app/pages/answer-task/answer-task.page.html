@@ -1,11 +1,22 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ task?.title || 'Task Details' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content class="ion-padding">
+  <div class="task-info" *ngIf="task">
+    <p *ngIf="task.deadline">Deadline: {{ task.deadline | date:'medium' }}</p>
+    <p>Total Items: {{ questions.length }}</p>
+  </div>
+
   <ion-card *ngFor="let q of questions; let i = index">
     <ion-card-header>
       <ion-card-title>Question {{ i + 1 }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
-      <p>{{ q.questionText }}</p>
+      <p>{{ q.text || q.question }}</p>
 
       <ion-radio-group
         [(ngModel)]="answers[i]"
@@ -13,7 +24,7 @@
       >
         <ion-item *ngFor="let choice of q.choices; let j = index">
           <ion-label>{{ choice }}</ion-label>
-          <ion-radio slot="end" [value]="j" name="q{{i}}"> </ion-radio>
+          <ion-radio slot="end" [value]="j" name="q{{i}}"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </ion-card-content>
