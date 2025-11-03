@@ -1,11 +1,10 @@
 .container {
-  padding: 16px;
   background-color: #ffffff;
   height: 100%;
 }
 ion-header {
   box-shadow: none;
-  padding-inline: 30px;
+  border: 1px solid #ededed;
 
   ion-toolbar {
     --background: #ffffff;
@@ -13,8 +12,7 @@ ion-header {
 
     ion-title {
       font-weight: bold;
-      font-size: 24px;
-      text-decoration: underline;
+      font-size: 20px;
     }
   }
   ion-icon {
@@ -29,7 +27,7 @@ ion-content {
     color: #343c6aaa;
     font-size: 1.5em;
     font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 
   ion-card.addTeachersCard {
@@ -88,7 +86,8 @@ ion-content {
     padding: 20px;
     position: relative;
 
-    &::before, &::after {
+    &::before,
+    &::after {
       content: "";
       position: absolute;
       height: 23px;
