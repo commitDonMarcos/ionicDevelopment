@@ -1,5 +1,5 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="ion-no-border">
+  <ion-toolbar>
     <ion-title>Admin Dashboard</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="logout()">Logout</ion-button>
@@ -7,91 +7,99 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding admin-page">
-  <h2>Manage Teachers</h2>
+<div class="container">
+  <ion-content class="ion-padding admin-page">
+    <ion-card class="addTeachersCard">
+      <h2 class="addHeader ion-text-center">Add a teacher</h2>
 
-  <form (ngSubmit)="addTeacher()">
-    <ion-item>
-      <ion-label position="floating">Username</ion-label>
-      <ion-input
-        [(ngModel)]="newTeacher.username"
-        name="username"
-        required
-      ></ion-input>
-    </ion-item>
+      <form (ngSubmit)="addTeacher()">
+        <ion-item>
+          <ion-input
+            label="Username"
+            labelPlacement="floating"
+            [(ngModel)]="newTeacher.username"
+            name="username"
+            required
+          ></ion-input>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input
-        [(ngModel)]="newTeacher.password"
-        name="password"
-        type="password"
-        required
-      ></ion-input>
-    </ion-item>
+        <ion-item>
+          <ion-input
+            label="Password"
+            labelPlacement="floating"
+            [(ngModel)]="newTeacher.password"
+            name="password"
+            type="password"
+            required
+          ></ion-input>
+        </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Subject</ion-label>
-      <ion-input
-        [(ngModel)]="newTeacher.subject"
-        name="subject"
-        required
-      ></ion-input>
-    </ion-item>
+        <ion-item>
+          <ion-input
+            label="Subject"
+            labelPlacement="floating"
+            [(ngModel)]="newTeacher.subject"
+            name="subject"
+            required
+          ></ion-input>
+        </ion-item>
 
-    <ion-button expand="block" type="submit" color="success">
-      Add Teacher
-    </ion-button>
-  </form>
+        <ion-button class="ion-padding" expand="block" type="submit">
+          Add Teacher
+        </ion-button>
+      </form>
+    </ion-card>
 
-  <!--  Search Bar (always visible so it doesn't disappear when no results) -->
-  <ion-searchbar
-    [(ngModel)]="searchTerm"
-    placeholder="Search teachers..."
-    (ionInput)="filterTeachers()"
-    debounce="200"
-  ></ion-searchbar>
+    <!--  Search Bar (always visible so it doesn't disappear when no results) -->
+    <h2>Manage Teachers</h2>
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      placeholder="Search teachers..."
+      (ionInput)="filterTeachers()"
+      debounce="200"
+    ></ion-searchbar>
 
-  <ion-list *ngIf="filteredTeachers.length > 0">
-    <ion-list-header>
-      <ion-label>Teachers List</ion-label>
-    </ion-list-header>
-    <!-- teachers list -->
-    <ion-item *ngFor="let teacher of filteredTeachers">
-      <ion-avatar slot="start">
-        <img
-          [src]="teacher.photo || 'assets/profile.png'"
-          alt="Teacher photo"
-        />
-      </ion-avatar>
+    <ion-list *ngIf="filteredTeachers.length > 0">
+      <ion-list-header>
+        <ion-label>Teachers List:</ion-label>
+      </ion-list-header>
+      <!-- teachers list -->
+      <ion-item *ngFor="let teacher of filteredTeachers">
+        <ion-avatar slot="start">
+          <img
+            [src]="teacher.photo || 'assets/profile.png'"
+            alt="Teacher photo"
+          />
+        </ion-avatar>
 
-      <ion-label>
-        <h2>{{ teacher.username }}</h2>
-        <p>Subject: {{ teacher.subject || 'N/A' }}</p>
-      </ion-label>
+        <ion-label>
+          <h2>{{ teacher.username }}</h2>
+          <p>Subject: {{ teacher.subject || 'N/A' }}</p>
+        </ion-label>
 
-      <!-- Edit button -->
-      <ion-button fill="clear" color="primary" (click)="editTeacher(teacher)">
-        <ion-icon name="create-outline"></ion-icon>
-      </ion-button>
+        <!-- Edit button -->
+        <ion-button fill="clear" color="primary" (click)="editTeacher(teacher)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
 
-      <!-- Delete button -->
-      <ion-button
-        color="danger"
-        fill="clear"
-        slot="end"
-        (click)="confirmDeleteTeacher(teacher)"
-      >
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-list>
+        <!-- Delete button -->
+        <ion-button
+          color="danger"
+          fill="clear"
+          slot="end"
+          (click)="confirmDeleteTeacher(teacher)"
+        >
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
 
-  <div *ngIf="teachers.length === 0" class="empty">No teachers yet.</div>
-  <div
-    *ngIf="teachers.length > 0 && filteredTeachers.length === 0"
-    class="empty"
-  >
-    No teachers match your search.
-  </div>
-</ion-content>
+    <div *ngIf="teachers.length === 0" class="empty">No teachers yet.</div>
+    <div
+      *ngIf="teachers.length > 0 && filteredTeachers.length === 0"
+      class="empty"
+    >
+      No teachers match your search.
+    </div>
+  </ion-content>
+</div>

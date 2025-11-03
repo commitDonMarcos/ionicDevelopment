@@ -7,23 +7,8 @@ import {
   ToastController,
   AlertController,
   ActionSheetController,
+  IonicModule,
 } from '@ionic/angular';
-import {
-  IonAvatar,
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
-  IonSearchbar,
-  IonTitle,
-  IonToolbar,
-} from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -33,22 +18,9 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./admin.page.scss'],
   standalone: true,
   imports: [
-    IonHeader,
-    IonContent,
-    IonToolbar,
-    IonTitle,
-    IonButton,
-    IonButtons,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonList,
-    IonListHeader,
     CommonModule,
     FormsModule,
-    IonIcon,
-    IonAvatar,
-    IonSearchbar,
+    IonicModule
   ],
 })
 export class AdminPage implements OnInit {

@@ -1,3 +1,55 @@
 ion-item ion-button {
   --color: #e53935;
 }
+.container {
+  padding: 16px;
+  background-color: #ffffff;
+  height: 100%;
+}
+ion-header {
+  box-shadow: none;
+
+  ion-toolbar {
+    --background: #ffffff;
+    --color: #343c6a;
+
+    ion-title {
+      font-weight: bold;
+      font-size: 24px;
+    }
+  }
+}
+ion-content {
+  .addHeader {
+    color: #343c6aaa;
+    font-size: 1.5em;
+  }
+
+  ion-card.addTeachersCard {
+    border-radius: 12px;
+    border: 1px solid #ededed;
+    box-shadow: none;
+    padding: 20px;
+
+    ion-button {
+      margin-top: 20px;
+      font-weight: bold;
+      --background: #396aff;
+      --color: #ffffff;
+      --border-radius: 8px;
+      width: 100%;
+      transition: all 0.3s ease;
+
+      &:hover {
+        --background: #396aff;
+      }
+    }
+  }
+
+  ion-searchbar {
+    --box-shadow: none;
+    margin-block: 10px;
+    --background: #f5f5f5;
+    --border-radius: 20px;
+  }
+}
