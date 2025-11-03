@@ -1,8 +1,8 @@
-<ion-header class="ion-no-border">
+<ion-header id="header" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Admin Dashboard</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">Logout</ion-button>
+      <ion-icon name="log-out" (click)="logout()"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -10,7 +10,7 @@
 <div class="container">
   <ion-content class="ion-padding admin-page">
     <ion-card class="addTeachersCard">
-      <h2 class="addHeader ion-text-center">Add a teacher</h2>
+      <h2 class="addHeader ion-text-center">Add a Teacher</h2>
 
       <form (ngSubmit)="addTeacher()">
         <ion-item>
@@ -31,7 +31,8 @@
             name="password"
             type="password"
             required
-          ></ion-input>
+          >
+          </ion-input>
         </ion-item>
 
         <ion-item>
@@ -51,47 +52,70 @@
     </ion-card>
 
     <!--  Search Bar (always visible so it doesn't disappear when no results) -->
-    <h2>Manage Teachers</h2>
-    <ion-searchbar
-      [(ngModel)]="searchTerm"
-      placeholder="Search teachers..."
-      (ionInput)="filterTeachers()"
-      debounce="200"
-    ></ion-searchbar>
+    <div class="mangeTeahcerSticky">
+      <h2 class="ion-text-center">Manage Teachers</h2>
+      <ion-searchbar
+      color="light"
+        [(ngModel)]="searchTerm"
+        placeholder="Search teachers..."
+        (ionInput)="filterTeachers()"
+        debounce="200"
+      ></ion-searchbar>
+    </div>
 
     <ion-list *ngIf="filteredTeachers.length > 0">
       <ion-list-header>
         <ion-label>Teachers List:</ion-label>
       </ion-list-header>
+
       <!-- teachers list -->
-      <ion-item *ngFor="let teacher of filteredTeachers">
-        <ion-avatar slot="start">
-          <img
-            [src]="teacher.photo || 'assets/profile.png'"
-            alt="Teacher photo"
-          />
-        </ion-avatar>
+      <ion-item-sliding *ngFor="let teacher of filteredTeachers">
+        <ion-card class="teachersListCard">
+          <ion-item>
+            <ion-avatar slot="start">
+              <img
+                [src]="teacher.photo || 'assets/profile.png'"
+                alt="Teacher photo"
+              />
+            </ion-avatar>
 
-        <ion-label>
-          <h2>{{ teacher.username }}</h2>
-          <p>Subject: {{ teacher.subject || 'N/A' }}</p>
-        </ion-label>
+            <ion-label>
+              <h2>{{ teacher.username }}</h2>
+              <p>Subject: {{ teacher.subject || 'N/A' }}</p>
+            </ion-label>
+            <ion-icon
+              size="small"
+              name="chevron-back-circle-outline"
+            ></ion-icon>
+            <span class="slideToEdit">Slide</span>
+          </ion-item>
 
-        <!-- Edit button -->
-        <ion-button fill="clear" color="primary" (click)="editTeacher(teacher)">
-          <ion-icon name="create-outline"></ion-icon>
-        </ion-button>
+          <!-- Edit button -->
+          <ion-item-options>
+            <ion-item-option>
+              <ion-button
+                fill="clear"
+                color="primary"
+                (click)="editTeacher(teacher)"
+              >
+                <ion-icon name="create-outline"></ion-icon>
+              </ion-button>
+            </ion-item-option>
 
-        <!-- Delete button -->
-        <ion-button
-          color="danger"
-          fill="clear"
-          slot="end"
-          (click)="confirmDeleteTeacher(teacher)"
-        >
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-      </ion-item>
+            <!-- Delete button -->
+            <ion-item-option expandable>
+              <ion-button
+                color="danger"
+                fill="clear"
+                slot="end"
+                (click)="confirmDeleteTeacher(teacher)"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-card>
+      </ion-item-sliding>
     </ion-list>
 
     <div *ngIf="teachers.length === 0" class="empty">No teachers yet.</div>

@@ -2,7 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, User } from 'src/app/services/auth';
 import { Storage } from '@ionic/storage-angular';
 import { addIcons } from 'ionicons';
-import { trashOutline, createOutline } from 'ionicons/icons';
+import {
+  trashOutline,
+  createOutline,
+  chevronBackCircleOutline,
+  logOut,
+} from 'ionicons/icons';
 import {
   ToastController,
   AlertController,
@@ -17,11 +22,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule
-  ],
+  imports: [CommonModule, FormsModule, IonicModule],
 })
 export class AdminPage implements OnInit {
   newTeacher = { username: '', password: '', subject: '' };
@@ -39,6 +40,8 @@ export class AdminPage implements OnInit {
     addIcons({
       'trash-outline': trashOutline,
       'create-outline': createOutline,
+      'chevron-back-circle-outline': chevronBackCircleOutline,
+      'log-out': logOut
     });
   }
 
@@ -80,6 +83,7 @@ export class AdminPage implements OnInit {
         position: 'top',
         duration: 2000,
         color: 'warning',
+        positionAnchor: 'header',
       });
       toast.present();
       return;
@@ -96,6 +100,7 @@ export class AdminPage implements OnInit {
         position: 'top',
         duration: 2000,
         color: 'danger',
+        positionAnchor: 'header',
       });
       toast.present();
       return;
@@ -122,15 +127,16 @@ export class AdminPage implements OnInit {
       duration: 2000,
       position: 'top',
       color: 'success',
+      positionAnchor: 'header',
     });
     toast.present();
   }
 
   async confirmDeleteTeacher(teacher: User) {
     const alert = await this.alertCtrl.create({
-      header: '⚠️ Confirm Delete',
+      header: 'Delete Teacher',
       message: `Are you sure you want to delete ${teacher.username.toLocaleUpperCase()}?`,
-      mode: 'ios',
+      mode: 'md',
       buttons: [
         {
           text: 'Cancel',
@@ -152,6 +158,7 @@ export class AdminPage implements OnInit {
               duration: 2000,
               position: 'top',
               color: 'medium',
+              positionAnchor: 'header',
             });
             toast.present();
           },
@@ -207,6 +214,7 @@ export class AdminPage implements OnInit {
                 duration: 2000,
                 position: 'top',
                 color: 'warning',
+                positionAnchor: 'header',
               });
               toast.present();
               return false;
@@ -227,6 +235,7 @@ export class AdminPage implements OnInit {
                 duration: 2000,
                 position: 'top',
                 color: 'success',
+                positionAnchor: 'header',
               });
               toast.present();
               return true;
@@ -236,6 +245,7 @@ export class AdminPage implements OnInit {
                 duration: 2000,
                 position: 'top',
                 color: 'danger',
+                positionAnchor: 'header',
               });
               toast.present();
               return false;
@@ -274,6 +284,7 @@ export class AdminPage implements OnInit {
             duration: 2000,
             position: 'top',
             color: 'success',
+            positionAnchor: 'header',
           });
           toast.present();
         }
