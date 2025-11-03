@@ -7,6 +7,7 @@ import {
   createOutline,
   chevronBackCircleOutline,
   logOut,
+  trash,
 } from 'ionicons/icons';
 import {
   ToastController,
@@ -41,7 +42,7 @@ export class AdminPage implements OnInit {
       'trash-outline': trashOutline,
       'create-outline': createOutline,
       'chevron-back-circle-outline': chevronBackCircleOutline,
-      'log-out': logOut
+      'log-out': logOut,
     });
   }
 

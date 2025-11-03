@@ -18,7 +18,7 @@ ion-header {
   ion-icon {
     margin-right: 16px;
     color: #e53935;
-    font-size: 2em;
+    font-size: 1.4em;
     cursor: pointer;
   }
 }
@@ -34,7 +34,6 @@ ion-content {
     border-radius: 12px;
     border: 1px solid #ededed;
     box-shadow: none;
-    padding: 20px;
 
     ion-button {
       margin-top: 20px;
@@ -52,49 +51,16 @@ ion-content {
   }
   .mangeTeahcerSticky {
     position: sticky;
-    top: -17px;
-    background: #fff;
-    z-index: 10;
+    top: -20px;
+    background-color: #ffffff;
     padding-top: 10px;
     padding-bottom: 10px;
+    z-index: 10;
+    border-bottom: 1px solid #ededed;
   }
-
-  ion-searchbar {
-    --box-shadow: none;
-    margin-block: 10px;
-    --border-radius: 20px;
-  }
-
-  ion-item-option {
-    background-color: #fff;
-    position: relative;
+  ion-item-sliding {
+    margin-bottom: 10px;
     border: 1px solid #ededed;
-  }
-  .slideToEdit {
-    font-size: 0.8em;
-    color: #999;
-    margin-left: 8px;
-  }
-
-  .empty {
-    text-align: center;
-    color: #999;
-    font-size: 1.2em;
-  }
-  .teachersListCard ion-item {
-    box-shadow: none;
-    padding: 20px;
-    position: relative;
-
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      height: 23px;
-      width: 100%;
-      background-color: #396aff;
-      left: 0;
-      bottom: -3px;
-    }
+    border-radius: 8px;
   }
 }
