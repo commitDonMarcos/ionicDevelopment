@@ -4,6 +4,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: entering 1s ease-in;
+}
+@keyframes entering {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .login-container {
@@ -46,7 +55,7 @@ ion-input {
 }
 
 .login-btn {
-  --background: #3e523a;
+  --background: #396aff;
   --border-radius: 6px;
   height: 44px;
   font-size: 16px;
@@ -56,5 +65,12 @@ ion-input {
 .error-msg {
   color: #ff4d4f;
   margin-bottom: 16px;
-  text-decoration: underline;
+}
+@media screen and (max-width: 767px) {
+  .login-container {
+    padding: 30px 20px;
+    box-shadow: none;
+    width: 90%;
+    transform: translateY(-75%);
+  }
 }
