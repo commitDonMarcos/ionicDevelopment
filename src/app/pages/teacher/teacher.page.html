@@ -65,13 +65,19 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="floating">Deadline (date & time)</ion-label>
+          <ion-label position="">Deadline (date & time)</ion-label>
+          <!-- !date time -->
           <ion-datetime
-            display-format="MMM DD, YYYY HH:mm"
-            picker-format="MMM DD YYYY HH:mm"
+            presentation="date-time"
+            [preferWheel]="true"
             [(ngModel)]="taskForm.deadline"
             name="deadline"
           ></ion-datetime>
+          <!-- ! -->
+          <!-- <ion-datetime
+            display-format="MMM DD, YYYY HH:mm"
+            picker-format="MMM DD YYYY HH:mm"
+          ></ion-datetime> -->
         </ion-item>
 
         <ion-item>
