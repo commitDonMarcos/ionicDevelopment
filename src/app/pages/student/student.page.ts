@@ -27,9 +27,9 @@ export class StudentPage {
 
   async debugStorage() {
     await this.storage.create();
-    console.log('Users:', await this.storage.get('users'));
+/*     console.log('Users:', await this.storage.get('users'));
     console.log('Current User:', await this.storage.get('currentUser'));
-  }
+ */  }
 
   async changePassword() {
     const alert = await this.alertCtrl.create({
