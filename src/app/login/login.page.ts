@@ -1,55 +1,63 @@
 import { Component } from '@angular/core';
-import { AuthService } from 'src/app/services/auth';
-import {
-  IonButton,
-  IonContent,
-  IonInput,
-  IonNote,
-} from '@ionic/angular/standalone';
-import { FormsModule } from '@angular/forms';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth';
+import { addIcons } from 'ionicons';
+import { eye, eyeOff } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [
-    IonContent,
-    IonInput,
-    IonButton,
-    FormsModule,
-    CommonModule,
-    IonNote,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule],
 })
 export class LoginPage {
   username = '';
   password = '';
-  errorMessage = '';
-  successMessage = '';
+  showPassword = false; // 👁️ Controls password visibility
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private auth: AuthService, // Inject AuthService
+    private toastCtrl: ToastController,
+    private router: Router
+  ) {
+    addIcons({ eye: eye, 'eye-off': eyeOff });
+  }
 
-  async onLogin() {
-    this.errorMessage = '';
-    const user = await this.authService.login(this.username, this.password);
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 
-    if (!user) {
-      setTimeout(() => {
-        this.errorMessage = '';
-      }, 2000);
-      this.errorMessage = 'Invalid username or password';
-      this.password = '';
+  async showToast(message: string, color: string = 'medium') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color,
+    });
+    await toast.present();
+  }
 
-      /* const toast = await this.toastCtrl.create({
-        message: this.errorMessage,
-        duration: 2000,
-        color: 'danger',
-        position: 'top',
-      });
+  async login() {
+    if (!this.username || !this.password) {
+      this.showToast('⚠️ Please fill out all fields.', 'warning');
+      return;
+    }
 
-      await toast.present(); */
+    // ✅ Allow "User" (admin) even with 5-character password
+    if (this.username !== 'User' && this.password.length < 6) {
+      this.showToast('⚠️ Password must be at least 6 characters.', 'danger');
+      return;
+    }
+
+    const user = await this.auth.login(this.username, this.password);
+
+    if (user) {
+      this.showToast(`👋 Welcome back, ${user.username}`, 'success');
+    } else {
+      this.showToast('❌ Invalid username or password.', 'danger');
     }
   }
 }

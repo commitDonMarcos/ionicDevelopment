@@ -1,37 +1,41 @@
-<ion-content class="ion-padding login-page">
-  <div class="login-container">
-    <img src="../../assets/icon/logo.png" height="50px" alt="Access_Hub_logo">
-    <h1>Login</h1>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-    <!-- error message -->
-    <ion-note *ngIf="errorMessage" class="error-msg"
-      >{{ errorMessage }}</ion-note
-    >
+<ion-content class="ion-padding">
+  <form (ngSubmit)="login()">
+    <!-- Username -->
+    <ion-item>
+      <ion-label position="floating">Username</ion-label>
+      <ion-input [(ngModel)]="username" name="username" required></ion-input>
+    </ion-item>
 
-    <form (ngSubmit)="onLogin()">
+    <!-- Password with visibility toggle -->
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
       <ion-input
-        type="text"
-        label="Username"
-        label-placement="floating"
-        fill="outline"
-        [(ngModel)]="username"
-        name="username"
-        required
-      ></ion-input>
-
-      <ion-input
-        label-placement="floating"
-        fill="outline"
-        type="password"
-        label="Password"
+        [type]="showPassword ? 'text' : 'password'"
         [(ngModel)]="password"
         name="password"
         required
+        minlength="6"
       ></ion-input>
+      <ion-icon
+        slot="end"
+        [name]="showPassword ? 'eye-off' : 'eye'"
+        (click)="togglePassword()"
+      ></ion-icon>
+    </ion-item>
 
-      <ion-button expand="block" class="login-btn" type="submit">
-        Log in
-      </ion-button>
-    </form>
-  </div>
+    <ion-button
+      expand="block"
+      type="submit"
+      color="primary"
+      class="ion-margin-top"
+    >
+      Login
+    </ion-button>
+  </form>
 </ion-content>

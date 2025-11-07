@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'splash', pathMatch: 'full' },
@@ -15,29 +16,21 @@ export const routes: Routes = [
     path: 'admin',
     loadComponent: () =>
       import('./pages/admin/admin.page').then((m) => m.AdminPage),
+    canActivate: [AuthGuard],
   },
-  /* {
+  {
     path: 'teacher',
     loadComponent: () =>
       import('./pages/teacher/teacher.page').then((m) => m.TeacherPage),
-  }, */
+    canActivate: [AuthGuard],
+  },
   {
     path: 'student',
     loadComponent: () =>
       import('./pages/student/student.page').then((m) => m.StudentPage),
+    canActivate: [AuthGuard],
   },
-  /* {
-    path: 'question-creator',
-    loadComponent: () =>
-      import('./pages/question-creator/question-creator.page').then(
-        (m) => m.QuestionCreatorPage
-      ),
-  }, */
-  {
-    path: 'teacher',
-    loadComponent: () =>
-      import('./pages/teacher/teacher.page').then((m) => m.TeacherPage),
-  },
+
   {
     path: 'question-creator/:id',
     loadComponent: () =>

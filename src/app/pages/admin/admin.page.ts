@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, User } from 'src/app/services/auth';
 import { Storage } from '@ionic/storage-angular';
 import { addIcons } from 'ionicons';
+import * as CryptoJS from 'crypto-js';
 import {
   trashOutline,
   createOutline,
@@ -131,6 +132,10 @@ export class AdminPage implements OnInit {
       positionAnchor: 'header',
     });
     toast.present();
+    this.newTeacher.password = CryptoJS.AES.encrypt(
+      this.newTeacher.password,
+      'secret-key'
+    ).toString();
   }
 
   async confirmDeleteTeacher(teacher: User) {
