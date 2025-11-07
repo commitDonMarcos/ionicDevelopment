@@ -31,33 +31,34 @@ export class LoginPage {
     this.showPassword = !this.showPassword;
   }
 
-  async showToast(message: string, color: string = 'medium') {
+  async showToast(message: string, cssClass: string) {
     const toast = await this.toastCtrl.create({
       message,
-      duration: 2000,
-      color,
+      duration: 1000,
+      position: 'top',
+      cssClass,
     });
     await toast.present();
   }
 
   async login() {
     if (!this.username || !this.password) {
-      this.showToast('⚠️ Please fill out all fields.', 'warning');
+      this.showToast('Please fill out all fields.', 'warning');
       return;
     }
 
-    // ✅ Allow "User" (admin) even with 5-character password
+    // Allow "User" (admin) even with 5-character password
     if (this.username !== 'User' && this.password.length < 6) {
-      this.showToast('⚠️ Password must be at least 6 characters.', 'danger');
+      this.showToast('Password must be at least 6 characters.', 'danger');
       return;
     }
 
     const user = await this.auth.login(this.username, this.password);
 
     if (user) {
-      this.showToast(`👋 Welcome back, ${user.username}`, 'success');
+      this.showToast(`Welcome back, ${user.username}`, 'success');
     } else {
-      this.showToast('❌ Invalid username or password.', 'danger');
+      this.showToast('Invalid username or password.', 'danger');
     }
   }
 }

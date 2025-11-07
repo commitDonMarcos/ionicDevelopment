@@ -9,6 +9,31 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+.warning,
+.danger,
+.success {
+  --background: #00000088;
+  --color: #ffffff;
+  --box-shadow: none;
+  backdrop-filter: blur(1px);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  animation: alert 0.3s ease;
+}
+.danger {
+  --background: #ff0000a1;
+}
+.success {
+  --background: #00740adb;
+}
+
+@keyframes alert {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -34,4 +59,4 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.system.css";
