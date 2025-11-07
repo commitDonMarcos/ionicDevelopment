@@ -18,15 +18,16 @@
     <ion-card-content>
       <p>{{ q.text || q.question }}</p>
 
-      <ion-radio-group
-        [(ngModel)]="answers[i]"
-        [ngModelOptions]="{standalone: true}"
-      >
-        <ion-item *ngFor="let choice of q.choices; let j = index">
-          <ion-label>{{ choice }}</ion-label>
-          <ion-radio slot="end" [value]="j" name="q{{i}}"></ion-radio>
-        </ion-item>
-      </ion-radio-group>
+      <ion-list>
+        <ion-radio-group [(ngModel)]="answers[i]">
+          <ion-item *ngFor="let choice of q.choices; let c = index">
+            <ion-label>
+              <strong>{{ 'ABCD'[c] }}.</strong> {{ choice }}
+            </ion-label>
+            <ion-radio slot="end" [value]="choice"></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-list>
     </ion-card-content>
   </ion-card>
 
