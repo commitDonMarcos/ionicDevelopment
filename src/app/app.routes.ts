@@ -10,25 +10,29 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
+    loadComponent: () =>
+      import('./login/login.page').then((m) => m.LoginPage),
   },
   {
     path: 'admin',
     loadComponent: () =>
       import('./pages/admin/admin.page').then((m) => m.AdminPage),
     canActivate: [AuthGuard],
+    data: { roles: ['admin'] },
   },
   {
     path: 'teacher',
     loadComponent: () =>
       import('./pages/teacher/teacher.page').then((m) => m.TeacherPage),
     canActivate: [AuthGuard],
+    data: { roles: ['teacher'] },
   },
   {
     path: 'student',
     loadComponent: () =>
       import('./pages/student/student.page').then((m) => m.StudentPage),
     canActivate: [AuthGuard],
+    data: { roles: ['student'] },
   },
 
   {
