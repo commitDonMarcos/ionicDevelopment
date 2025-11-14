@@ -10,8 +10,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () =>
-      import('./login/login.page').then((m) => m.LoginPage),
+    loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
   },
   {
     path: 'admin',
@@ -26,6 +25,15 @@ export const routes: Routes = [
       import('./pages/teacher/teacher.page').then((m) => m.TeacherPage),
     canActivate: [AuthGuard],
     data: { roles: ['teacher'] },
+    children: [
+      {
+        path: 'teacher-announcements',
+        loadComponent: () =>
+          import(
+            './pages/teacher-announcements/teacher-announcements.page'
+          ).then((m) => m.TeacherAnnouncementsPage),
+      },
+    ],
   },
   {
     path: 'student',
@@ -95,10 +103,10 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'change-password',
+    path: 'student-announcements',
     loadComponent: () =>
-      import('./pages/change-password/change-password.page').then(
-        (m) => m.ChangePasswordPage
+      import('./pages/student-announcements/student-announcements.page').then(
+        (m) => m.StudentAnnouncementsPage
       ),
   },
 ];

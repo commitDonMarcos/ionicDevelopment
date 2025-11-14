@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Teacher Announcements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Create Announcement</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input
+          [(ngModel)]="title"
+          label="Title"
+          placeholder="Enter title"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-textarea
+          [(ngModel)]="message"
+          label="Message"
+          placeholder="Enter announcement details..."
+          autoGrow="true"
+        ></ion-textarea>
+      </ion-item>
+
+      <ion-button expand="block" color="primary" (click)="postAnnouncement()">
+        Post Announcement
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="announcements.length > 0">
+    <ion-list-header>
+      <ion-label>Posted Announcements</ion-label>
+    </ion-list-header>
+
+    <ion-item *ngFor="let a of announcements">
+      <ion-label>
+        <h2>{{ a.title }}</h2>
+        <p>{{ a.message }}</p>
+        <ion-note color="medium">{{ a.date }}</ion-note>
+      </ion-label>
+
+      <ion-button
+        fill="clear"
+        color="danger"
+        (click)="deleteAnnouncement(a.id)"
+      >
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

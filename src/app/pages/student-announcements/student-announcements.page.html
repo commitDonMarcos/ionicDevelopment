@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Announcements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngFor="let a of announcements">
+    <ion-card-header>
+      <ion-card-title>{{ a.title }}</ion-card-title>
+      <ion-note>{{ a.date | date:'medium' }}</ion-note>
+    </ion-card-header>
+    <ion-card-content>
+      <p>{{ a.message }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-text
+    *ngIf="!announcements.length"
+    color="medium"
+    class="ion-text-center"
+  >
+    <p>No announcements yet.</p>
+  </ion-text>
+</ion-content>

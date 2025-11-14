@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController, IonicModule, NavController } from '@ionic/angular';
 import { TaskResultsPage } from '../../task-results/task-results.page';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 import { ToastController, AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { trashOutline } from 'ionicons/icons';
+import { megaphoneOutline, trashOutline } from 'ionicons/icons';
 import { TeacherStudentsPage } from '../teacher-students/teacher-students.page';
 
 interface Task {
@@ -40,6 +40,8 @@ interface User {
     IonicModule, //  Handles all Ionic elements
     CommonModule,
     FormsModule,
+    RouterOutlet,
+    RouterLink
   ],
 })
 export class TeacherPage {
@@ -49,13 +51,21 @@ export class TeacherPage {
 
   constructor(
     private storage: Storage,
-    private router: Router,
+    public router: Router,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private navCtrl: NavController
   ) {
-    addIcons({ 'trash-outline': trashOutline });
+    addIcons({
+      'trash-outline': trashOutline,
+      'megaphone-outline': megaphoneOutline,
+    });
   }
+  goToAnnouncements() {
+    this.navCtrl.navigateForward('/teacher-announcements');
+  }
+
   async openStudentManager() {
     const modal = await this.modalCtrl.create({
       component: TeacherStudentsPage,

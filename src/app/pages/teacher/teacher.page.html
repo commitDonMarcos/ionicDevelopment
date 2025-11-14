@@ -3,11 +3,20 @@
     <ion-title>Teacher Dashboard</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="logout()">Logout</ion-button>
+      <ion-button
+        expand="block"
+        color="secondary"
+        routerLink="teacher-announcements"
+      >
+        <ion-icon slot="start" name="megaphone-outline"></ion-icon>
+        Announcements
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding teacher-page">
+  <router-outlet></router-outlet>
   <!-- Profile card -->
   <div class="profile-card">
     <ion-avatar class="profile-avatar">

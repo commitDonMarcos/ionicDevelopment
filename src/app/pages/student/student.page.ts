@@ -4,6 +4,8 @@ import { IonicModule, NavController, AlertController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage-angular';
 import { Router } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { notificationsOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-student',
@@ -17,19 +19,24 @@ export class StudentPage {
   tasks: any[] = [];
   results: any[] = [];
   pastTasks: any[] = []; // 🔹 added
+  unreadCount = 0;
+  announcements: any[] = [];
 
   constructor(
     private storage: Storage,
     private router: Router,
     private navCtrl: NavController,
     private alertCtrl: AlertController
-  ) {}
+  ) {
+    addIcons({ 'notifications-outline': notificationsOutline });
+  }
 
   async debugStorage() {
     await this.storage.create();
-/*     console.log('Users:', await this.storage.get('users'));
+    /*     console.log('Users:', await this.storage.get('users'));
     console.log('Current User:', await this.storage.get('currentUser'));
- */  }
+ */
+  }
 
   async changePassword() {
     const alert = await this.alertCtrl.create({
@@ -113,9 +120,28 @@ export class StudentPage {
   async ionViewWillEnter() {
     await this.storage.create();
     this.student = (await this.storage.get('currentUser')) || null;
+    await this.loadAnnouncements();
     await this.loadTasks();
     await this.loadResults();
     this.debugStorage();
+  }
+
+  async loadAnnouncements() {
+    const all = (await this.storage.get('announcements')) || [];
+    const readMap =
+      (await this.storage.get(`read_${this.student?.username}`)) || [];
+
+    this.announcements = all;
+    this.unreadCount = all.filter((a: any) => !readMap.includes(a.id)).length;
+  }
+
+  async openAnnouncements() {
+    // Mark all as read
+    const allIds = this.announcements.map((a: any) => a.id);
+    await this.storage.set(`read_${this.student?.username}`, allIds);
+
+    // Navigate to announcements page
+    this.navCtrl.navigateForward('/student-announcements');
   }
 
   goToChangePassword() {

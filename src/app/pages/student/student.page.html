@@ -4,6 +4,14 @@
     <ion-buttons slot="end">
       <ion-button (click)="goToChangePassword()">CHANGE PASSWORD</ion-button>
       <ion-button (click)="logout()">LOGOUT</ion-button>
+      <ion-button (click)="openAnnouncements()">
+        <ion-icon name="notifications-outline"></ion-icon>
+
+        <!-- Badge if unread -->
+        <ion-badge *ngIf="unreadCount > 0" color="danger" class="notif-badge">
+          {{ unreadCount }}
+        </ion-badge>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
