@@ -76,11 +76,11 @@ export const routes: Routes = [
         (m) => m.StudentAnalysisPage
       ),
   },
-  {
+  /* {
     path: 'student',
     loadComponent: () =>
       import('./pages/student/student.page').then((m) => m.StudentPage),
-  },
+  }, */
   {
     path: 'answer-task/:id',
     loadComponent: () =>
@@ -109,4 +109,9 @@ export const routes: Routes = [
         (m) => m.StudentAnnouncementsPage
       ),
   },
+  {
+    path: 'setup-admin',
+    loadComponent: () => import('./pages/setup-admin/setup-admin.page').then( m => m.SetupAdminPage)
+  },
+
 ];

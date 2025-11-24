@@ -17,7 +17,7 @@ import { eye, eyeOff } from 'ionicons/icons';
 export class LoginPage {
   username = '';
   password = '';
-  showPassword = false; // 👁️ Controls password visibility
+  showPassword = false; // Controls password visibility
 
   constructor(
     private auth: AuthService, // Inject AuthService

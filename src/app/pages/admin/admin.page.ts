@@ -7,17 +7,18 @@ import {
   trashOutline,
   createOutline,
   chevronBackCircleOutline,
-  logOut,
-  trash,
+  logOutOutline,
+  eyeOff,
+  eye,
+  gridOutline,
+  closeOutline,
+  person,
+  personAddOutline,
 } from 'ionicons/icons';
-import {
-  ToastController,
-  AlertController,
-  ActionSheetController,
-  IonicModule,
-} from '@ionic/angular';
+import { ToastController, AlertController, IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActionSheetController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-admin',
@@ -32,31 +33,45 @@ export class AdminPage implements OnInit {
   adminUser: User | null = null;
   filteredTeachers: any[] = [];
   searchTerm: string = '';
+  showPassword = false;
+  presentingElement!: HTMLElement | null;
 
   constructor(
     private authService: AuthService,
     private storage: Storage,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private actionSheetCtrl: ActionSheetController
   ) {
     addIcons({
       'trash-outline': trashOutline,
       'create-outline': createOutline,
       'chevron-back-circle-outline': chevronBackCircleOutline,
-      'log-out': logOut,
+      'log-out-outline': logOutOutline,
+      'eye-off': eyeOff,
+      eye: eye,
+      'grid-outline': gridOutline,
+      'close-outline': closeOutline,
+      'person-add-outline': personAddOutline
     });
   }
 
   async ngOnInit() {
+    // Initialize adminUser from AuthService or Storage
+    this.presentingElement = document.querySelector('.ion-page');
+    this.adminUser = await this.authService.getCurrentUser();
     await this.loadTeachers();
   }
   async ionViewWillEnter() {
     await this.loadTeachers();
   }
-  // filter teachers by username or subject
+  // filter teachers by username or subject, and by admin
   async loadTeachers() {
     const users = (await this.storage.get('users')) || [];
-    this.teachers = users.filter((u: User) => u.role === 'teacher');
+    // Only show teachers created by this admin
+    this.teachers = users.filter(
+      (u: User) => u.role === 'teacher' && u.createdBy === this.adminUser?.id
+    );
     this.filteredTeachers = [...this.teachers];
   }
   filterTeachers() {
@@ -304,4 +319,26 @@ export class AdminPage implements OnInit {
   async logout() {
     await this.authService.logout();
   }
+
+  canDismiss = async () => {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Are you sure want to exit?',
+      buttons: [
+        {
+          text: 'Yes',
+          role: 'confirm',
+        },
+        {
+          text: 'Stay',
+          role: 'cancel',
+        },
+      ],
+    });
+
+    actionSheet.present();
+
+    const { role } = await actionSheet.onWillDismiss();
+
+    return role === 'confirm';
+  };
 }

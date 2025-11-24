@@ -19,10 +19,14 @@ export class StudentAnnouncementsPage {
   async ionViewWillEnter() {
     await this.storage.create();
     this.student = await this.storage.get('currentUser');
-    this.announcements = (await this.storage.get('announcements')) || [];
+    const allAnnouncements = (await this.storage.get('announcements')) || [];
+    // Only show announcements from student's teacher
+    this.announcements = allAnnouncements.filter(
+      (a: any) => a.teacherId === this.student?.teacherId
+    );
 
     // Mark all as read for this student
-    const ids = this.announcements.map((a) => a.id);
+    const ids = this.announcements.map((a: any) => a.id);
     await this.storage.set(`read_${this.student?.username}`, ids);
   }
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { User } from 'src/app/services/auth';
 import {
   IonicModule,
   ModalController,
@@ -19,6 +20,7 @@ export class TeacherStudentsPage {
   students: any[] = [];
   newStudent = { name: '', username: '', password: '' };
   teacher: any;
+  adminUser: User | null = null;
 
   constructor(
     private modalCtrl: ModalController,

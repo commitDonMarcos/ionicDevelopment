@@ -8,23 +8,92 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h2>{{ task?.title }}</h2>
-  <p><strong>Total Students:</strong> {{ totalStudents }}</p>
-  <p>
-    <strong>Highest Scorer:</strong>
-    {{ highestStudent || 'N/A' }} ({{ highestScore }}/{{ task?.numItems }})
-  </p>
-  <p>
-    <strong>Passed:</strong> {{ (totalStudents > 0 ? (passedCount /
-    totalStudents) * 100 : 0) | number:'1.0-0' }}%
-  </p>
+  <!-- NO RESULTS -->
+  <div *ngIf="results.length === 0">
+    <p>No results yet.</p>
+  </div>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Question Performance</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <canvas id="resultsChart" height="220"></canvas>
-    </ion-card-content>
-  </ion-card>
+  <!-- WITH RESULTS -->
+  <div *ngIf="results.length > 0">
+    <p><strong>Total submissions:</strong> {{ totalStudents }}</p>
+    <p>
+      <strong>Highest score:</strong> {{ highestScore }} — {{ highestStudent }}
+    </p>
+
+    <!-- PER ITEM ANALYSIS -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Per-item analysis</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <table style="width: 100%; border-collapse: collapse">
+          <thead>
+            <tr>
+              <th style="text-align: left; padding: 6px">Item</th>
+              <th style="text-align: right; padding: 6px">Correct count</th>
+              <th style="text-align: right; padding: 6px">Percent</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let p of percentPerItem; let i = index">
+              <td style="padding: 6px">Q{{ i + 1 }}</td>
+              <td style="padding: 6px; text-align: right">
+                {{ itemCorrectCounts[i] || 0 }}
+              </td>
+              <td style="padding: 6px; text-align: right">{{ p }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- MPS + MPL -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>MPS & MPL Summary</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>MPS:</strong> {{ mps }}%</p>
+        <p><strong>MPL (60%):</strong> {{ mpl }} items</p>
+        <p><strong>Learners Above MPL:</strong> {{ mplPercent }}%</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- CHART -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Performance Chart</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div style="width: 100%; height: 300px">
+          <canvas id="taskChart"></canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- SUBMISSIONS -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Submissions</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let r of results">
+            <ion-label>
+              <h3>{{ r.studentName || r.studentId }}</h3>
+              <p>
+                Score: {{ r.score }} / {{ r.total }} • Date: {{ r.date |
+                date:'medium' }}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

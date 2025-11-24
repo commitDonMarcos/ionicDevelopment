@@ -34,6 +34,18 @@
   }
 }
 
+/* RESPONSIVE */
+/* Small Screens */
+@media screen and (max-width: 768px) {
+  .table_list {
+    overflow-x: auto;
+  }
+}
+
+/* Large Screens */
+@media screen and (min-width: 769px) {
+}
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 

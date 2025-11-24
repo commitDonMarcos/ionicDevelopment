@@ -41,7 +41,7 @@ interface User {
     CommonModule,
     FormsModule,
     RouterOutlet,
-    RouterLink
+    RouterLink,
   ],
 })
 export class TeacherPage {
@@ -243,7 +243,9 @@ export class TeacherPage {
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
+  // inside TeacherPage (replace existing viewTaskResults)
   async viewTaskResults(task: Task) {
+    // get results for quick check
     const allResults = (await this.storage.get('results')) || {};
     const taskResults = allResults[task.id] || [];
 
@@ -255,8 +257,7 @@ export class TeacherPage {
     const modal = await this.modalCtrl.create({
       component: TaskResultsPage,
       componentProps: {
-        task,
-        results: taskResults,
+        taskId: task.id, // pass id only; TaskResultsPage will call auth.getResultsForTask
       },
     });
 

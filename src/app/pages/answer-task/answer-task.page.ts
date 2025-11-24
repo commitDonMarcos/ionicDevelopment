@@ -1,3 +1,4 @@
+// src/app/pages/answer-task/answer-task.page.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -8,7 +9,7 @@ import {
 } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Storage } from '@ionic/storage-angular';
+import { AuthService } from 'src/app/services/auth';
 
 @Component({
   selector: 'app-answer-task',
@@ -21,28 +22,28 @@ export class AnswerTaskPage {
   taskId!: string | null;
   task: any = null;
   questions: any[] = [];
-  answers: number[] = []; // index chosen per question
+  answers: number[] = [];
   student: any = null;
   alreadySubmitted = false;
 
   constructor(
     private route: ActivatedRoute,
-    private storage: Storage,
+    private auth: AuthService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private navCtrl: NavController
   ) {}
 
   async ionViewWillEnter() {
-    await this.storage.create();
+    await this.auth.init?.();
     this.taskId = this.route.snapshot.paramMap.get('id');
-    this.student = (await this.storage.get('currentUser')) || null;
+    this.student = (await this.auth.getCurrentUser()) || null;
     await this.loadTask();
     await this.checkAlreadySubmitted();
   }
 
   async loadTask() {
-    const tasks = (await this.storage.get('tasks')) || [];
+    const tasks = (await (this.auth as any)._storage.get('tasks')) || [];
     this.task = tasks.find((t: any) => t.id == this.taskId) || null;
 
     if (!this.task) {
@@ -56,7 +57,6 @@ export class AnswerTaskPage {
       return;
     }
 
-    // Normalize question data to ensure compatibility
     this.questions = (this.task.questions || []).map((q: any) => ({
       text: q.text || q.question || 'Untitled Question',
       choices: q.choices || [],
@@ -64,18 +64,13 @@ export class AnswerTaskPage {
         typeof q.correctIndex === 'number' ? q.correctIndex : q.correct,
     }));
 
-    // Initialize empty answers
     this.answers = this.questions.map(() => -1);
   }
 
   async checkAlreadySubmitted() {
-    const allResults = (await this.storage.get('results')) || {};
-    const taskKey = this.taskId;
-    if (!taskKey) {
-      console.error('taskId is null!');
-      return;
-    }
-
+    const allResults = (await (this.auth as any)._storage.get('results')) || {};
+    const taskKey = this.taskId as string;
+    if (!taskKey) return;
     const resultsForTask = allResults[taskKey] || [];
     const found = resultsForTask.find(
       (r: any) =>
@@ -93,6 +88,7 @@ export class AnswerTaskPage {
       await t.present();
     }
   }
+
   selectAnswer(qIndex: number, choiceIndex: number) {
     this.answers[qIndex] = choiceIndex;
   }
@@ -108,7 +104,7 @@ export class AnswerTaskPage {
       return;
     }
 
-    // Validate all answered
+    // validate answers
     for (let i = 0; i < this.questions.length; i++) {
       if (this.answers[i] === -1) {
         const to = await this.toastCtrl.create({
@@ -121,7 +117,7 @@ export class AnswerTaskPage {
       }
     }
 
-    // Calculate score
+    // calculate score & prepare answers payload
     let score = 0;
     const answersPayload: any[] = [];
     for (let i = 0; i < this.questions.length; i++) {
@@ -151,24 +147,20 @@ export class AnswerTaskPage {
       date: Date.now(),
     };
 
-    // 🔹 1. Save to teacher view results (by task)
-    const allResults = (await this.storage.get('results')) || {};
-    const taskKey = this.taskId;
-    if (!taskKey) {
-      console.error('taskId is null! Cannot save results.');
-      return;
-    }
-    const arr = allResults[taskKey] || [];
-    arr.push(submission);
-    allResults[taskKey] = arr;
-    await this.storage.set('results', allResults);
+    // --- SAVE via AuthService ----
+    await this.auth.saveTaskResult(
+      this.taskId as string,
+      this.student?.id,
+      submission
+    );
 
-    // 🔹 2. Save to student-specific results
-    const studentResults = (await this.storage.get('studentResults')) || [];
+    // Optional: also save to studentResults array for student history if your app uses that
+    const studentResults =
+      (await (this.auth as any)._storage.get('studentResults')) || [];
     studentResults.push(submission);
-    await this.storage.set('studentResults', studentResults);
+    await (this.auth as any)._storage.set('studentResults', studentResults);
 
-    // 🔹 Show result to student
+    // show result to student
     const alert = await this.alertCtrl.create({
       header: 'Submitted',
       message: `You scored ${score} / ${total} (${
@@ -178,7 +170,7 @@ export class AnswerTaskPage {
     });
     await alert.present();
 
-    // Navigate back
+    // navigate back to student dashboard
     this.navCtrl.navigateRoot('/student');
   }
 }

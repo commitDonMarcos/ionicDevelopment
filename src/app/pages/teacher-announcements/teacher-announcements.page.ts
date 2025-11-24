@@ -18,9 +18,8 @@ export class TeacherAnnouncementsPage {
   message = '';
   announcements: any[] = [];
 
-  constructor(private storage: Storage, private toastCtrl: ToastController) 
-  {
-    addIcons({'trash': trash})
+  constructor(private storage: Storage, private toastCtrl: ToastController) {
+    addIcons({ trash: trash });
   }
 
   async ionViewWillEnter() {
@@ -39,30 +38,28 @@ export class TeacherAnnouncementsPage {
       return;
     }
 
+    // Get current teacher
+    const teacher = await this.storage.get('currentUser');
     const newAnnouncement = {
       id: Date.now(),
       title: this.title,
       message: this.message,
       date: new Date().toLocaleString(),
+      teacherId: teacher?.id,
     };
 
     this.announcements.unshift(newAnnouncement);
     await this.storage.set('announcements', this.announcements);
+  }
 
-    // Clear fields
-    this.title = '';
-    this.message = '';
-
+  async deleteAnnouncement(id: string) {
+    this.announcements = this.announcements.filter((a) => a.id !== id);
+    await this.storage.set('announcements', this.announcements);
     const toast = await this.toastCtrl.create({
-      message: 'Announcement posted!',
+      message: 'Announcement deleted successfully.',
       duration: 2000,
       color: 'success',
     });
     toast.present();
-  }
-
-  async deleteAnnouncement(id: number) {
-    this.announcements = this.announcements.filter((a) => a.id !== id);
-    await this.storage.set('announcements', this.announcements);
   }
 }

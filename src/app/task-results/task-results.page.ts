@@ -1,94 +1,138 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+// src/app/pages/task-results/task-results.page.ts
+import { Component, Input } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { Chart, registerables } from 'chart.js';
-import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AuthService } from 'src/app/services/auth';
 
-Chart.register(...registerables);
+// CHART.JS IMPORTS
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+} from 'chart.js';
+
+// REGISTER CHART.JS COMPONENTS
+Chart.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement
+);
 
 @Component({
   selector: 'app-task-results',
   templateUrl: './task-results.page.html',
   styleUrls: ['./task-results.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonicModule, CommonModule],
 })
-export class TaskResultsPage implements AfterViewInit {
-  @Input() task: any;
-  @Input() results: any[] = [];
+export class TaskResultsPage {
+  @Input() taskId: string = '';
 
-  highestStudent = '';
-  highestScore = 0;
-  passedCount = 0;
-  percentages: number[] = [];
+  results: any[] = [];
   totalStudents = 0;
+  highestScore = -1;
+  highestStudent = '';
+  percentPerItem: number[] = [];
+  itemCorrectCounts: number[] = [];
 
-  constructor(
-    private modalCtrl: ModalController,
-    private cdr: ChangeDetectorRef
-  ) {}
+  mps: number = 0;
+  mpl: number = 0;
+  mplPercent: number = 0;
 
-  ngAfterViewInit() {
-    this.calculateStats();
-    this.cdr.detectChanges(); // force Angular to detect changes after properties are updated
-    this.renderChart();
+  chart: any;
+
+  constructor(private auth: AuthService, private modalCtrl: ModalController) {}
+
+  // IMPORTANT: Use ionViewDidEnter so canvas exists
+  async ionViewDidEnter() {
+    if (this.taskId) {
+      await this.load(this.taskId);
+      setTimeout(() => this.renderChart(), 200);
+    }
   }
 
-  calculateStats() {
-    if (!this.results || this.results.length === 0) return;
-
-    const numItems = this.task.numItems;
+  async load(taskId: string) {
+    this.results = (await this.auth.getResultsForTask(taskId)) || [];
     this.totalStudents = this.results.length;
+
+    if (this.totalStudents === 0) return;
+
+    const numItems =
+      this.results[0]?.total || this.results[0]?.answers?.length || 0;
+
     const correctCounts = Array(numItems).fill(0);
+    let totalRaw = 0;
+    let totalPossible = numItems * this.totalStudents;
+    let learnersAboveMPL = 0;
+    this.mpl = Math.ceil(numItems * 0.6);
 
     for (const r of this.results) {
-      let score = 0;
-      for (let i = 0; i < numItems; i++) {
-        if (r.answers && r.answers[i]?.isCorrect) {
-          correctCounts[i]++;
-          score++;
-        }
+      totalRaw += r.score;
+
+      if (r.score >= this.mpl) learnersAboveMPL++;
+
+      if (r.score > this.highestScore) {
+        this.highestScore = r.score;
+        this.highestStudent = r.studentName || r.studentId;
       }
-      if (score > this.highestScore) {
-        this.highestScore = score;
-        this.highestStudent = r.studentName;
+
+      for (let i = 0; i < (r.answers || []).length; i++) {
+        if (r.answers[i]?.isCorrect) correctCounts[i]++;
       }
-      if (score / numItems >= 0.5) this.passedCount++;
     }
 
-    this.percentages = correctCounts.map((c) =>
+    this.itemCorrectCounts = correctCounts;
+    this.percentPerItem = correctCounts.map((c) =>
       Math.round((c / this.totalStudents) * 100)
     );
+
+    this.mps = Math.round((totalRaw / totalPossible) * 100);
+    this.mplPercent = Math.round((learnersAboveMPL / this.totalStudents) * 100);
   }
 
   renderChart() {
-    const ctx = document.getElementById('resultsChart') as HTMLCanvasElement;
-    if (!ctx) return;
+    const canvas = document.getElementById('taskChart') as HTMLCanvasElement;
+    if (!canvas) return;
 
-    new Chart(ctx, {
+    if (this.chart) this.chart.destroy();
+
+    this.chart = new Chart(canvas, {
       type: 'bar',
       data: {
-        labels: this.percentages.map((_, i) => `Q${i + 1}`),
+        labels: this.percentPerItem.map((_, i) => `Q${i + 1}`),
         datasets: [
           {
-            label: '% Correct',
-            data: this.percentages,
-            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-            borderRadius: 8,
+            label: 'Percent Correct per Item',
+            data: this.percentPerItem,
+            borderWidth: 1,
+          },
+          {
+            label: 'MPL (60%) Line',
+            data: this.percentPerItem.map(() => 60),
+            type: 'line',
+            pointRadius: 3,
+            borderWidth: 2,
           },
         ],
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           y: {
-            beginAtZero: true,
+            min: 0,
             max: 100,
-            title: { display: true, text: 'Percentage (%)' },
           },
         },
-        plugins: { legend: { display: false } },
       },
     });
   }

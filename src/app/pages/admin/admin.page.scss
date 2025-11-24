@@ -1,66 +1,48 @@
-.container {
-  background-color: #ffffff;
-  height: 100%;
-}
 ion-header {
-  box-shadow: none;
-  border: 1px solid #ededed;
+  box-shadow: 0px -30px 30px 5px rgba(0, 0, 0, 0.879);
+}
+.search {
+  --border-radius: 50px;
+  --box-shadow: none;
+  position: sticky;
+  top: -20px;
+  z-index: 10;
+}
+table {
+  width: 100%;
+  text-align: center;
 
-  ion-toolbar {
-    --background: #ffffff;
-    --color: #343c6a;
-
-    ion-title {
-      font-weight: bold;
-      font-size: 20px;
-    }
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
   }
-  ion-icon {
-    margin-right: 16px;
-    color: #e53935;
-    font-size: 1.4em;
-    cursor: pointer;
+
+  tr:nth-child(even) {
+    background-color: #f0e5e5;
+  }
+  th {
+    background-color: #2c2c2cdb;
+    color: white;
   }
 }
-ion-content {
-  .addHeader {
-    color: #343c6aaa;
-    font-size: 1.5em;
-    font-weight: bold;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  ion-card.addTeachersCard {
-    border-radius: 12px;
-    border: 1px solid #ededed;
-    box-shadow: none;
-
-    ion-button {
-      margin-top: 20px;
-      --background: #396aff;
-      --color: #ffffff;
-      --border-radius: 8px;
-      width: 100%;
-      --box-shadow: none;
-      transition: all 0.3s ease;
-
-      &:hover {
-        --background: #396aff;
-      }
-    }
-  }
-  .mangeTeahcerSticky {
-    position: sticky;
-    top: -20px;
-    background-color: #ffffff;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    z-index: 10;
-    border-bottom: 1px solid #ededed;
-  }
-  ion-item-sliding {
-    margin-bottom: 10px;
-    border: 1px solid #ededed;
-    border-radius: 8px;
-  }
+ion-avatar {
+  margin: auto;
+}
+.table_list {
+  box-shadow: 0px 7px 10px -9px;
+}
+.item_hover:hover {
+  --background: #0000000f;
+  cursor: pointer;
+}
+.empty {
+  text-align: center;
+  margin-top: 30px;
+}
+ion-icon {
+  cursor: pointer;
+}
+form {
+  margin-top: 50px;
 }
